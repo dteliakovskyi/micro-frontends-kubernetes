@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mf-orders-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mf-orders-service
+  template:
+    metadata:
+      labels:
+        app: mf-orders-service
+    spec:
+      containers:
+        - name: mf-orders-service
+          image: joise/mf-orders
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mf-orders-service
+spec:
+  selector:
+    app: mf-orders-service
+  ports:
+    - name: mf-orders-service
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

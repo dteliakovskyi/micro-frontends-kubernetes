@@ -1,0 +1,89 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    # - Telling skaffold where k8s files are located
+    manifests:
+      - infra/k8s/*
+# - Disable docker push to dockerhub
+build:
+  local:
+    push: false
+  # - Telling skaffold that there are will be running pod with docker image
+  artifacts:
+    - image: joise/auth-service
+      # - Root path to the code for this image
+      context: auth/backend
+      docker:
+        dockerfile: Dockerfile
+      # - When ever changes are maing inside this path skaffold will try update a pod
+      sync:
+        manual:
+          # From where skaffold should watch files to change
+          - src: "src/**/*.ts"
+            # Tell skaffold where to put this changes corresponding in pod (the same place)
+            dest: .
+    - image: joise/tickets-service
+      context: tickets/backend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: joise/orders-service
+      context: orders/backend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: joise/payments-service
+      context: payments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: joise/expiration-service
+      context: expiration
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
+    - image: joise/host
+      context: host
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer:
+          - "**/*.ts"
+          - "**/*.tsx"
+    - image: joise/mf-auth
+      context: auth/frontend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer:
+          - "**/*.ts"
+          - "**/*.tsx"
+    - image: joise/mf-tickets
+      context: tickets/frontend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer:
+          - "**/*.ts"
+          - "**/*.tsx"
+    - image: joise/mf-orders
+      context: orders/frontend
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        infer:
+          - "**/*.ts"
+          - "**/*.tsx"

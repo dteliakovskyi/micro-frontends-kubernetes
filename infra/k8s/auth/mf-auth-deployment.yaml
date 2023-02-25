@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mf-auth-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mf-auth-service
+  template:
+    metadata:
+      labels:
+        app: mf-auth-service
+    spec:
+      containers:
+        - name: mf-auth-service
+          image: joise/mf-auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mf-auth-service
+spec:
+  selector:
+    app: mf-auth-service
+  ports:
+    - name: mf-auth-service
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

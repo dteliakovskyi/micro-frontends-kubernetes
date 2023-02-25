@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: host-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: host-service
+  template:
+    metadata:
+      labels:
+        app: host-service
+    spec:
+      containers:
+        - name: host-service
+          image: joise/host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: host-service
+spec:
+  selector:
+    app: host-service
+  ports:
+    - name: host-service
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-service
+  namespace: ingress-nginx
+spec:
+  type: ExternalName
+  externalName: ingress-service
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: microfrontends.dev
+      http:
+        paths:
+          - path: /mf-tickets
+            pathType: Prefix
+            backend:
+              service:
+                name: mf-tickets-service
+                port:
+                  number: 3000
+          - path: /mf-orders
+            pathType: Prefix
+            backend:
+              service:
+                name: mf-orders-service
+                port:
+                  number: 3000
+          - path: /mf-auth
+            pathType: Prefix
+            backend:
+              service:
+                name: mf-auth-service
+                port:
+                  number: 3000
+    - host: atlas.dev
+      http:
+        paths:
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: payments-service
+                port:
+                  number: 3000
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tickets-service
+                port:
+                  number: 3000
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-service
+                port:
+                  number: 3000
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3000
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: host-service
+                port:
+                  number: 3000

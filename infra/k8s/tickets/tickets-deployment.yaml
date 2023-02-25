@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickets-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tickets-service
+  template:
+    metadata:
+      labels:
+        app: tickets-service
+    spec:
+      containers:
+        - name: tickets-service
+          image: joise/tickets-service
+          env:
+            - name: MONGO_URI
+              value: mongodb://tickets-mongo-service:27017/tickets
+            - name: NATS_URL
+              value: http://nats-service:4222
+            - name: NATS_CLUSTER_ID
+              value: atlas
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-service
+spec:
+  selector:
+    app: tickets-service
+  ports:
+    - name: tickets-service
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

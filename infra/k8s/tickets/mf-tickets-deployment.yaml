@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mf-tickets-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mf-tickets-service
+  template:
+    metadata:
+      labels:
+        app: mf-tickets-service
+    spec:
+      containers:
+        - name: mf-tickets-service
+          image: joise/mf-tickets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mf-tickets-service
+spec:
+  selector:
+    app: mf-tickets-service
+  ports:
+    - name: mf-tickets-service
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

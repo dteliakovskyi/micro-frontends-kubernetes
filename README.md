@@ -30,5 +30,3 @@ To open micro-frontend application in side web browser open:
 
 To open root application witch contain all micro-frontends you should open
  - https://atlas.dev
-
-If you received  
